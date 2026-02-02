@@ -7,9 +7,9 @@ import os
 
 # Configuração da página
 st.set_page_config(
-      page_title="Agente de Inteligência Executiva",
-      page_icon="🤖",
-      layout="wide"
+          page_title="Agente de Inteligência Executiva",
+          page_icon="🤖",
+          layout="wide"
 )
 
 # Título e Sidebar
@@ -17,25 +17,25 @@ st.title("🤖 Agente de Inteligência Executiva")
 st.markdown("---")
 
 with st.sidebar:
-      st.header("⚙️ Configurações")
+          st.header("⚙️ Configurações")
 
     # Tenta buscar a chave dos Secrets do Streamlit
-      api_key = st.secrets.get("GOOGLE_API_KEY", "")
+          api_key = st.secrets.get("GOOGLE_API_KEY", "")
 
     # Se não houver chave nos secrets, permite input manual
-      if not api_key:
-                api_key = st.text_input("Google API Key", type="password", help="Sua chave do Google AI Studio")
+          if not api_key:
+                        api_key = st.text_input("Google API Key", type="password", help="Sua chave do Google AI Studio")
 else:
         st.success("✅ API Key carregada")
 
-    st.subheader("🌐 Fontes de Dados")
+          st.subheader("🌐 Fontes de Dados")
     source_g1 = st.checkbox("G1 (Principais Notícias)", value=True)
     source_rss = st.checkbox("G1 RSS (Tecnologia)", value=True)
 
     st.subheader("🧠 Modelo IA")
     model_option = st.selectbox(
-              "Selecione o Modelo",
-              ("models/gemini-2.5-flash", "models/gemini-1.5-flash", "models/gemini-2.0-flash")
+                  "Selecione o Modelo",
+                  ("models/gemini-2.5-flash", "models/gemini-1.5-flash", "models/gemini-2.0-flash")
     )
 
     st.markdown("---")
@@ -43,27 +43,31 @@ else:
 
 # Inicialização dos componentes
 if 'report' not in st.session_state:
-      st.session_state.report = None
-  if 'news' not in st.session_state:
-        st.session_state.news = []
+          st.session_state.report = None
+      if 'news' not in st.session_state:
+                st.session_state.news = []
 
 # Layout de Colunas
 col1, col2 = st.columns([1, 2])
 
 with col1:
-      st.subheader("🔍 Coleta de Informação")
-      if st.button("🚀 Iniciar Ciclo de Inteligência"):
-                if not api_key:
-                              st.error("⚠️ Por favor, insira sua API Key no menu lateral.")
-      else:
-                    with st.status("📡 Executando fluxo de dados...", expanded=True) as status:
-                                      st.write("🕵️ Iniciando Web Scraping...")
-                                      scraper = NewsScraper()
-                                      all_news = []
+          st.subheader("🔍 Coleta de Informação")
+          if st.button("🚀 Iniciar Ciclo de Inteligência"):
+                        if not api_key:
+                                          st.error("⚠️ Por favor, insira sua API Key no menu lateral.")
+          else:
+                            with st.status("📡 Executando fluxo de dados...", expanded=True) as status:
+                                                  st.write("🕵️ Iniciando Web Scraping...")
+                                                  scraper = NewsScraper()
+                                                  all_news = []
 
                 if source_g1:
-                      st.write("📰 Coletando do G1...")
-                                      all_news.extend(scraper.scrape_g1())
+                          st.write("📰 Coletando do G1...")
+                                          all_news.extend(scraper.scrape_g1())
 
                 if source_rss:
-                                      st.write("📡 Coletando 
+                                          st.write("📡 Coletando via RSS...")
+                                          all_news.extend(scraper.scrape_rss())
+
+                st.session_state.news = all_news
+                st.write(f"✅ {len(al
