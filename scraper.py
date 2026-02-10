@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import json
+import feedparser
 
 class NewsScraper:
     def __init__(self):
@@ -9,68 +9,35 @@ class NewsScraper:
         }
 
     def scrape_g1(self):
-        """Scrapes news from G1 (Brazilian news)"""
         url = "https://g1.globo.com/"
+        news_list = []
         try:
             response = requests.get(url, headers=self.headers)
-            response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
-            
-            news_list = []
-            # Find news items
-            items = soup.find_all('div', class_='feed-post-body')
-            
-            for item in items[:10]:  # Limit to 10 items
-                title_tag = item.find('a', class_='feed-post-link')
-                summary_tag = item.find('div', class_='feed-post-body-resumo')
-                
-                if title_tag:
-                    title = title_tag.get_text().strip()
-                    link = title_tag.get('href')
-                    summary = summary_tag.get_text().strip() if summary_tag else "Sem resumo disponível."
-                    
+            for item in soup.select('.feed-post-body')[:10]:
+                title = item.select_one('.feed-post-link')
+                summary = item.select_one('.feed-post-body-resumo')
+                if title:
                     news_list.append({
-                        'title': title,
-                        'link': link,
-                        'summary': summary,
+                        'title': title.text.strip(),
+                        'summary': summary.text.strip() if summary else "Sem resumo disponível",
                         'source': 'G1'
                     })
-            return news_list
         except Exception as e:
             print(f"Erro ao raspar G1: {e}")
-            return []
+        return news_list
 
-    def scrape_rss(self, url="https://g1.globo.com/rss/g1/"):
-        """Parses RSS feed for news"""
+    def scrape_rss(self):
+        url = "https://g1.globo.com/rss/g1/tecnologia/"
+        news_list = []
         try:
-            response = requests.get(url, headers=self.headers)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, features="xml")
-            
-            news_list = []
-            items = soup.find_all('item')
-            
-            for item in items[:10]:
-                title = item.title.text if item.title else "Sem título"
-                link = item.link.text if item.link else ""
-                description = item.description.text if item.description else "Sem descrição"
-                # Clean description (remove HTML tags if any)
-                clean_description = BeautifulSoup(description, "html.parser").get_text()
-                
+            feed = feedparser.parse(url)
+            for entry in feed.entries[:10]:
                 news_list.append({
-                    'title': title,
-                    'link': link,
-                    'summary': clean_description,
-                    'source': 'RSS Feed'
+                    'title': entry.title,
+                    'summary': entry.summary if 'summary' in entry else "Sem resumo disponível",
+                    'source': 'G1 Tecnologia (RSS)'
                 })
-            return news_list
         except Exception as e:
             print(f"Erro ao ler RSS: {e}")
-            return []
-
-if __name__ == "__main__":
-    scraper = NewsScraper()
-    print("Testando G1...")
-    print(json.dumps(scraper.scrape_g1()[:2], indent=2, ensure_ascii=False))
-    print("\nTestando Google News...")
-    print(json.dumps(scraper.scrape_google_news("IA")[:2], indent=2, ensure_ascii=False))
+        return news_list
