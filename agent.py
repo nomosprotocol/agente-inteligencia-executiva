@@ -2,7 +2,7 @@ import google.generativeai as genai
 import os
 
 class ReportAgent:
-    def __init__(self, api_key, model_name="models/gemini-2.5-flash"):
+    def __init__(self, api_key, model_name="models/gemini-1.5-flash"):
         actual_key = api_key if api_key else os.environ.get("GOOGLE_API_KEY")
         if not actual_key:
             raise ValueError("Google API Key não configurada.")
