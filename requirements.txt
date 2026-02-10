@@ -1,9 +1,6 @@
 streamlit
-langchain
-langchain-google-genai
-beautifulsoup4
-requests
-google-generativeai
 pandas
-lxml
-
+requests
+beautifulsoup4
+feedparser
+google-generativeai
