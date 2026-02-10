@@ -22,8 +22,10 @@ with st.sidebar:
     source_rss = st.checkbox("G1 RSS (Tecnologia)", value=True)
     model_option = st.selectbox("Modelo IA", ("models/gemini-2.5-flash", "models/gemini-1.5-flash"))
 
-if 'report' not in st.session_state: st.session_state.report = None
-if 'news' not in st.session_state: st.session_state.news = []
+if 'report' not in st.session_state:
+    st.session_state.report = None
+if 'news' not in st.session_state:
+    st.session_state.news = []
 
 col1, col2 = st.columns([1, 2])
 
@@ -36,8 +38,10 @@ with col1:
             with st.spinner("Processando..."):
                 scraper = NewsScraper()
                 news = []
-                if source_g1: news.extend(scraper.scrape_g1())
-                if source_rss: news.extend(scraper.scrape_rss())
+                if source_g1:
+                    news.extend(scraper.scrape_g1())
+                if source_rss:
+                    news.extend(scraper.scrape_rss())
                 st.session_state.news = news
                 if news:
                     agent = ReportAgent(api_key=api_key, model_name=model_option)
