@@ -23,8 +23,8 @@ with st.sidebar:
     source_g1 = st.checkbox("G1 (Notícias)", value=True)
     source_rss = st.checkbox("G1 RSS (Tecnologia)", value=True)
     
-    # Ajustado para models/gemini-1.5-flash como padrão para evitar erros de permissão
-    model_option = st.selectbox("Modelo IA", ("models/gemini-1.5-flash", "models/gemini-2.0-flash-exp"))
+    # Ajustado para models/gemini-1.5-flash-latest como padrão para evitar erros de permissão
+    model_option = st.selectbox("Modelo IA", ("models/gemini-1.5-flash-latest", "models/gemini-2.0-flash-exp"))
 
 if 'report' not in st.session_state:
     st.session_state.report = None
