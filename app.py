@@ -13,7 +13,6 @@ st.markdown("---")
 with st.sidebar:
     st.header("⚙️ Configurações")
     
-    # Prioridade para a chave nos segredos do Streamlit
     api_key = st.secrets.get("GOOGLE_API_KEY", "")
     if not api_key:
         api_key = st.text_input("Google API Key", type="password")
@@ -22,9 +21,7 @@ with st.sidebar:
     
     source_g1 = st.checkbox("G1 (Notícias)", value=True)
     source_rss = st.checkbox("G1 RSS (Tecnologia)", value=True)
-    
-    # Ajustado para models/gemini-1.5-flash-latest como padrão para evitar erros de permissão
-    model_option = st.selectbox("Modelo IA", ("models/gemini-1.5-flash-latest", "models/gemini-2.0-flash-exp"))
+    model_option = st.selectbox("Modelo IA", ("models/gemini-1.5-flash-latest", "models/gemini-1.5-flash"))
 
 if 'report' not in st.session_state:
     st.session_state.report = None
