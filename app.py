@@ -10,6 +10,25 @@ st.set_page_config(page_title="Agente de Inteligência Executiva", page_icon="�
 st.title("🤖 Agente de Inteligência Executiva")
 st.markdown("---")
 
+# Estilização Customizada
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f5f7f9;
+    }
+    .stButton>button {
+        width: 100%;
+        border-radius: 5px;
+        height: 3em;
+        background-color: #007bff;
+        color: white;
+    }
+    .stDownloadButton>button {
+        width: 100%;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 with st.sidebar:
     st.header("⚙️ Configurações")
     
@@ -49,7 +68,10 @@ with col1:
                 if news:
                     try:
                         agent = ReportAgent(api_key=api_key, model_name=model_option)
-                        st.session_state.report = agent.generate_report(news)
+                        with st.status("Analizando dados e redigindo relatório...", expanded=True) as status:
+                            st.write("Interpretando tendências...")
+                            st.session_state.report = agent.generate_report(news)
+                            status.update(label="✅ Relatório Concluído!", state="complete", expanded=False)
                     except Exception as e:
                         st.error(f"Erro na geração: {e}")
                 else:
